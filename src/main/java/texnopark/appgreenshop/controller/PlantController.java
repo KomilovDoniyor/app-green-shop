@@ -55,6 +55,7 @@ public class PlantController {
     @ApiPageable
     @GetMapping("/page/list")
     public HttpEntity<?> findAllPageable(@ApiIgnore Pageable pageable){
+        // Pageable
         return plantService.findAllPageable(pageable);
     }
 }
