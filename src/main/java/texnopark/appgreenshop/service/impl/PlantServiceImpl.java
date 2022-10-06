@@ -100,8 +100,8 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public HttpEntity<?> findAllPageable() {
-        Pageable pageable = PageRequest.of(0,2,Sort.by("createdAt"));
+    public HttpEntity<?> findAllPageable(Pageable pageable) {
+        //Pageable pageable = PageRequest.of(0,2,Sort.by("createdAt"));
         Page<Plant> page = plantRepository.findAll(pageable);
         List<Plant> plants = page.getContent();
         Response response = new Response(true,"Plant List", Collections.singletonList(plants));

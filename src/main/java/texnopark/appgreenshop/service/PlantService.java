@@ -7,6 +7,7 @@
 package texnopark.appgreenshop.service;
 
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import texnopark.appgreenshop.dto.PlantCreateDto;
 
@@ -23,5 +24,5 @@ public interface PlantService {
 
     HttpEntity<?> edit(Long id, PlantCreateDto dto);
 
-    HttpEntity<?> findAllPageable();
+    HttpEntity<?> findAllPageable(Pageable pageable);
 }

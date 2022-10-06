@@ -6,8 +6,11 @@
  */
 package texnopark.appgreenshop.controller;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
+import texnopark.appgreenshop.annotation.ApiPageable;
 import texnopark.appgreenshop.dto.PlantCreateDto;
 import texnopark.appgreenshop.service.PlantService;
 
@@ -49,8 +52,9 @@ public class PlantController {
         return plantService.edit(id, dto);
     }
 
+    @ApiPageable
     @GetMapping("/page/list")
-    public HttpEntity<?> findAllPageable(){
-        return plantService.findAllPageable();
+    public HttpEntity<?> findAllPageable(@ApiIgnore Pageable pageable){
+        return plantService.findAllPageable(pageable);
     }
 }
