@@ -42,6 +42,4 @@ public class Plant extends AbsEntity {
     @JoinColumn(name = "parent_id")
     private Plant parent;
 
-    private LocalDateTime createdAt;
-
 }

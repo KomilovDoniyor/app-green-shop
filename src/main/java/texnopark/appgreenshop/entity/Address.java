@@ -28,5 +28,4 @@ public class Address extends AbsEntity {
     private String firstname;
     private String lastname;
 
-
 }
