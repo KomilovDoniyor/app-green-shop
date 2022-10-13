@@ -15,8 +15,11 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import texnopark.appgreenshop.security.JwtFilter;
 import texnopark.appgreenshop.service.impl.MyUserService;
 
 @Configuration
@@ -24,6 +27,7 @@ import texnopark.appgreenshop.service.impl.MyUserService;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final MyUserService userService;
+    private final JwtFilter jwtFilter;
 
     @Bean
     @Override
@@ -32,8 +36,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public SecurityConfig(@Lazy MyUserService userService) {
+    public SecurityConfig(@Lazy MyUserService userService,
+                          @Lazy JwtFilter jwtFilter) {
         this.userService = userService;
+        this.jwtFilter = jwtFilter;
     }
 
     @Override
@@ -54,5 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/auth/**", "/api/v1/roles").permitAll()
                 .anyRequest()
                 .authenticated();
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 }
