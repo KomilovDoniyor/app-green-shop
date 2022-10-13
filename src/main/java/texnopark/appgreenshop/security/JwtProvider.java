@@ -19,7 +19,7 @@ public class JwtProvider {
     private static Long EXPIRATION_TIME = 86_400_00L;
     private static String KEY = "ThisKeySecretKeyForJWT";
 
-    public String generateToken(String username, Set<Role> roles){
+    public String generateToken(String username, Set<Role> roles) {
         String token = Jwts
                 .builder()
                 .setSubject(username)
@@ -29,5 +29,16 @@ public class JwtProvider {
                 .claim("roles", roles)
                 .compact();
         return token;
+    }
+
+    public String getUsernameFromToken(String token) {
+
+        String username = Jwts
+                .parser()
+                .setSigningKey(KEY)
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+        return username;
     }
 }

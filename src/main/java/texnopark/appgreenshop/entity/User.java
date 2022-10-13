@@ -37,8 +37,7 @@ public class User extends AbsEntity implements UserDetails {
 
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @ToString.Exclude
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
 
     private boolean accountNonExpired = true;
