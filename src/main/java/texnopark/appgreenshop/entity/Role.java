@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
+import org.springframework.security.core.GrantedAuthority;
 import texnopark.appgreenshop.entity.template.AbsEntity;
 
 import javax.persistence.Column;
@@ -22,11 +23,16 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "roles")
-public class Role extends AbsEntity {
+public class Role extends AbsEntity implements GrantedAuthority {
 
     @Column(nullable = false, unique = true)
     private String name;
     private String description;
+
+    @Override
+    public String getAuthority() {
+        return this.name;
+    }
 
     @Override
     public boolean equals(Object o) {
