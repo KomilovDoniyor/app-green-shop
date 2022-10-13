@@ -84,7 +84,6 @@ public class CategoryServiceImpl implements CategoryService {
             Category parent = findByParentId(dto.getParentId());
             category.setParent(parent);
             category.setDescription(dto.getDescription());
-            category.setStatus(dto.getStatus());
             Category savedCategory = categoryRepository.save(category);
             return ResponseEntity.status(HttpStatus.OK).body(savedCategory);
         }

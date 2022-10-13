@@ -13,7 +13,7 @@ import texnopark.appgreenshop.dto.RegisterDto;
 import texnopark.appgreenshop.service.impl.MyUserService;
 
 @RestController
-@RequestMapping(value = "/api/auth")
+@RequestMapping(value = "/api/auth/")
 public class AuthController {
     private final MyUserService userService;
 
