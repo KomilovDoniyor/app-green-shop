@@ -13,10 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import texnopark.appgreenshop.entity.template.AbsEntity;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Entity
 @Getter
@@ -40,6 +38,10 @@ public class User extends AbsEntity implements UserDetails {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
 
+    private Integer verificationCode;
+
+    private LocalDateTime verificationCodeExpiredDate;
+
     private boolean accountNonExpired = true;
     private boolean accountNonLocked = true;
     private boolean credentialsNonExpired = true;
@@ -47,7 +49,18 @@ public class User extends AbsEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles;
+        List<GrantedAuthority> list = new ArrayList<>();
+        Set<Role> roles = this.roles;
+        list.addAll(roles);
+
+        Set<Permission> permissions = new HashSet<>();
+        for (Role role : roles) {
+            permissions.addAll(role.getPermissionSet());
+        }
+
+        list.addAll(permissions);
+
+        return list;
     }
 
     @Override

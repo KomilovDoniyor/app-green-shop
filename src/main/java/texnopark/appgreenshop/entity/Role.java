@@ -13,10 +13,10 @@ import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import texnopark.appgreenshop.entity.template.AbsEntity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Data
@@ -27,6 +27,13 @@ public class Role extends AbsEntity implements GrantedAuthority {
 
     @Column(nullable = false, unique = true)
     private String name;
+
+    @ManyToMany(fetch = FetchType.EAGER,targetEntity = Permission.class)
+    @JoinTable(name = "role_permissions",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id"))
+    private Set<Permission> permissionSet = new HashSet<>();
+
     private String description;
 
     @Override

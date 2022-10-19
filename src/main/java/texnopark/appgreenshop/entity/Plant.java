@@ -13,7 +13,6 @@ import texnopark.appgreenshop.entity.template.AbsEntity;
 import texnopark.appgreenshop.enums.PlantSize;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Data

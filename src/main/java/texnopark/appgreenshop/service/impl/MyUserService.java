@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,6 +30,7 @@ import texnopark.appgreenshop.security.JwtProvider;
 
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
 @Service
@@ -38,6 +41,7 @@ public class  MyUserService implements UserDetailsService {
     private final RoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final JavaMailSender mailSender;
 
 
     @Override
@@ -61,7 +65,25 @@ public class  MyUserService implements UserDetailsService {
             byId.ifPresent(roles::add);
         }
         User savedUser = userRepository.save(user);
+        //sendVerificationCodeFromEmail(savedUser.getEmail());
         return ResponseEntity.status(HttpStatus.CREATED).body("Successfully registered " + savedUser.getEmail());
+    }
+
+    private void sendVerificationCodeFromEmail(String toEmail) {
+        Integer code = generateVerificationCode();
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom("komiloff.doniyor2505@gmail.com");
+        mailMessage.setTo(toEmail);
+        mailMessage.setText(code.toString());
+        mailMessage.setSubject("ConfirmationCode");
+
+        mailSender.send(mailMessage);
+    }
+
+    private Integer generateVerificationCode() {
+        Random random = new Random();
+        int code = random.nextInt(999999);
+        return code;
     }
 
     public HttpEntity<?> login(LoginDto dto) {

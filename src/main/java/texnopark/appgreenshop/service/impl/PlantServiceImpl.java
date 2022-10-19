@@ -8,9 +8,8 @@ package texnopark.appgreenshop.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +22,8 @@ import texnopark.appgreenshop.repository.PlantRepository;
 import texnopark.appgreenshop.response.Response;
 import texnopark.appgreenshop.service.PlantService;
 
+import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -100,14 +101,31 @@ public class PlantServiceImpl implements PlantService {
     }
 
     @Override
-    public HttpEntity<?> findAllPageable(Pageable pageable) {
+    public HttpEntity<?> findAllPageable(String size, String categoryName, String name, Pageable pageable) {
         //Pageable pageable = PageRequest.of(0,2,Sort.by("createdAt"));
-        Page<Plant> page = plantRepository.findAll(pageable);
+        Page<Plant> page = plantRepository.findAll(addFilterSpecification(name, categoryName, size), pageable);
         List<Plant> plants = page.getContent();
-        Response response = new Response(true,"Plant List", Collections.singletonList(plants));
+        Response response = new Response(true, "Plant List", Collections.singletonList(plants));
         response.getMap().put("size", page.getSize());
         response.getMap().put("total_page", page.getTotalPages());
         response.getMap().put(("total_content"), page.getTotalElements());
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    private Specification<Plant> addFilterSpecification(String size, String categoryName, String name) {
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (name != null) {
+                predicates.add(criteriaBuilder.equal(root.get("name"), name));
+            }
+            if (size != null) {
+                predicates.add(criteriaBuilder.equal(root.get("size"), size));
+            }
+            if (categoryName != null) {
+                predicates.add(criteriaBuilder.equal(root.get("category").get("name"), categoryName));
+            }
+            return criteriaBuilder.and(predicates.toArray((new Predicate[0])));
+        };
     }
 }

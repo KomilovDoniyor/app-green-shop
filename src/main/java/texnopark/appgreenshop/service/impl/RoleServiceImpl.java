@@ -11,24 +11,39 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import texnopark.appgreenshop.dto.RoleDto;
+import texnopark.appgreenshop.entity.Permission;
 import texnopark.appgreenshop.entity.Role;
+import texnopark.appgreenshop.repository.PermissionRepository;
 import texnopark.appgreenshop.repository.RoleRepository;
 import texnopark.appgreenshop.service.RoleService;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
+    private final PermissionRepository permissionRepository;
 
-    public RoleServiceImpl(RoleRepository roleRepository) {
+    public RoleServiceImpl(RoleRepository roleRepository, PermissionRepository permissionRepository) {
         this.roleRepository = roleRepository;
+        this.permissionRepository = permissionRepository;
     }
 
     @Override
     public HttpEntity<?> save(RoleDto dto) {
-        Role role = new Role();
-        role.setName(dto.getName());
-        role.setDescription(dto.getDescription());
+        Set<Permission> permissions = new HashSet<>();
+        for (Long permissionsId : dto.getPermissionsId()) {
+            Permission permission = permissionRepository.findById(permissionsId).orElse(null);
+            if (permission != null) {
+                permissions.add(permission);
+            }
+        }
+        Role role = new Role(
+                dto.getName(),
+                permissions,
+                dto.getDescription());
         Role saveRole = roleRepository.save(role);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Name: " + saveRole.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).body(saveRole);
     }
 }

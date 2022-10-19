@@ -24,5 +24,6 @@ public interface PlantService {
 
     HttpEntity<?> edit(Long id, PlantCreateDto dto);
 
-    HttpEntity<?> findAllPageable(Pageable pageable);
+    HttpEntity<?> findAllPageable(String s, String categoryName, String name, Pageable pageable);
+
 }
